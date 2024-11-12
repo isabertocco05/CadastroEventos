@@ -2,9 +2,9 @@
 
 <?php
 session_start();
-require "../app/controllers/MainController.php";
+require "../app/controllers/UserController.php";
 
-$controller = new MainController();
+$controller = new UserController();
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: /login");
