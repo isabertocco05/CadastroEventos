@@ -1,16 +1,5 @@
 <?php
-
-$host = 'localhost'; 
-$db = 'cadastro_eventos'; 
-$user = 'root'; 
-$pass = 'Ma020204*'; 
-
-
-$conn = new mysqli($host, $user, $pass, $db);
-if ($conn->connect_error) {
-    die("Conexão falhou: " . $conn->connect_error);
-}
-
+include('../config/Conexao.php');
 $mensagem = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

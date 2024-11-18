@@ -1,16 +1,6 @@
 <?php
-// Conectar ao banco de dados
-$host = 'localhost'; 
-$db = 'cadastro_eventos'; 
-$user = 'root'; 
-$pass = 'Ma020204*'; 
+include('../config/Conexao.php');
 
-$conn = new mysqli($host, $user, $pass, $db);
-if ($conn->connect_error) {
-    die("Conexão falhou: " . $conn->connect_error);
-}
-
-// Buscar todos os eventos para exibir na aba "Gerenciar Evento"
 $sql = "SELECT * FROM eventos";
 $result = $conn->query($sql);
 $eventos = [];
@@ -18,7 +8,6 @@ while ($row = $result->fetch_assoc()) {
     $eventos[] = $row;
 }
 
-// Fechar a conexão
 $conn->close();
 ?>
 

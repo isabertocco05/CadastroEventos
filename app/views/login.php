@@ -1,13 +1,44 @@
+<?php
+session_start();
+include('../config/conexao.php');
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['acao']) && $_POST['acao'] == 'login') {
+    $usuario = $_POST['usuario'];
+    $senha = $_POST['senha'];
+
+    $sql = "SELECT * FROM usuarios WHERE usuario = :usuario";
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam(':usuario', $usuario);
+    $stmt->execute();
+
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($user && password_verify($senha, $user['senha'])) {
+
+        $_SESSION['usuario_id'] = $user['id'];
+        $_SESSION['usuario_tipo'] = $user['tipo']; // admin ou user normal
+        
+        if ($user['tipo'] == 'admin') {
+            header('Location: views/admin/painel.php');
+        } else {
+            header('Location: views/user/painel.php');
+        }
+        exit();
+    } else {
+        $erro = "Usuário ou senha incorretos!";
+    }
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
-    <link rel="stylesheet" href="/CADASTROEVENTOS/public/style/login.css">
+    <link rel="stylesheet" href="style/login.css">
 </head>
-
 <body>
     <div class="container">
         <div class="options">
@@ -18,17 +49,20 @@
         <div id="loginForm">
             <h2>Login</h2>
             <form action="login.php" method="POST">
+                <input type="hidden" name="acao" value="login">
                 <label for="usuario">Usuário</label>
                 <input type="text" name="usuario" id="usuario" required>
                 <label for="senha">Senha</label>
                 <input type="password" name="senha" id="senha" required>
                 <button type="submit">Entrar</button>
             </form>
+            <?php if (isset($erro)) { echo "<p style='color: red;'>$erro</p>"; } ?>
         </div>
 
         <div id="cadastroForm" style="display: none;">
             <h2>Cadastrar</h2>
-            <form action="cadastro.php" method="POST">
+            <form action="login.php" method="POST">
+                <input type="hidden" name="acao" value="cadastro">
                 <label for="email">Email</label>
                 <input type="email" name="email" id="email" required>
                 <label for="usuario">Usuário</label>
@@ -39,6 +73,7 @@
                 <input type="password" name="confirmaSenha" id="confirmaSenha" required>
                 <button type="submit">Cadastrar</button>
             </form>
+            <?php if (isset($erro)) { echo "<p style='color: red;'>$erro</p>"; } ?>
         </div>
     </div>
 
@@ -58,5 +93,4 @@
         }
     </script>
 </body>
-
 </html>
